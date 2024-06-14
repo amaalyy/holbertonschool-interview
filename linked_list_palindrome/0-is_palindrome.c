@@ -1,70 +1,41 @@
-#include "lists.h"
-#include <stdio.h>
 #include <stdlib.h>
-/**
- *  reverseList - will reverse the singly linkedlist
- * @temp: temp pointer
- * Return: listint_t
- */
-listint_t *reverseList(listint_t *temp)
-{
-	listint_t *current = temp;
-	listint_t *prevNode = NULL, *nextNode = NULL;
+#include "lists.h"
 
-	while (current != NULL)
-	{
-		nextNode = current->next;
-		current->next = prevNode;
-		prevNode = current;
-		current = nextNode;
-	}
-	return (prevNode);
-}
 /**
- * is_palindrome - check for palindrome
- * @head: pointer
- * Return: true or false
- */
+* recurse_list - Compares 1st and last node, then 2nd last and 2nd, etc
+* @left: Keeps track of left side of list
+* @right: Keeps track of nodes on right
+* Return: 0 if it is not a palindrome, 1 if it is a palindrome
+*/
+
+int recurse_list(listint_t **left, listint_t *right)
+{
+	int result;
+
+	if (right == NULL){
+		return 1;
+	}
+
+	result = recurse_list(left, right->next) && (*left)->n == right->n;
+
+	*left = (*left)->next;
+
+	return result;
+}
+
+/**
+* is_palindrome - Checks if LL is a palindrome
+* @head: Double pointer to head of list
+* Return: 0 if it is not a palindrome, 1 if it is a palindrome
+*/
+
 int is_palindrome(listint_t **head)
 {
-	listint_t *p, *q, *first_start, *second_start;
-		p = *head;
-		q = *head;
+	listint_t *deref_head = *head;
 
-		if (p->next == NULL)
-			return (1);
-		while (1)
-		{
-			p = p->next->next;
-			if (p == NULL)
-			{
-				second_start = q->next;
-				break;
-			}
-			if (p->next == NULL)
-			{
-				second_start = q->next->next;
-				break;
-			}
-			q = q->next;
-		}
-		q->next = NULL;
-		second_start = reverseList(second_start);
-		first_start = *head;
-		while (first_start != NULL && second_start != NULL)
-		{
-			if (first_start->n == second_start->n)
-			{
-				first_start = first_start->next;
-				second_start = second_start->next;
-				free(second_start);
-			}
-			else
-			{
-				return (0);
-			}
-		}
-		free(q);
-		free(p);
-		return (1);
+    if (!head || !*head) {
+        return 1; 
+    }
+
+    return recurse_list(&deref_head, deref_head);
 }

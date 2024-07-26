@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+
 #include "menger.h"
 /**
  * drawMenger - draw each level of the Menger Sponge

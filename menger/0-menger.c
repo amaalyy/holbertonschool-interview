@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <math.h>
-
 #include "menger.h"
 /**
  * drawMenger - draw each level of the Menger Sponge
@@ -15,8 +14,8 @@ void drawMenger(int level, int size, int row, int col)
 {
     int newSize, isCenterEmpty;
 
-	if (level == 0)
-	{
+    if (level == 0)
+    {
         printf("#");
     }
     else

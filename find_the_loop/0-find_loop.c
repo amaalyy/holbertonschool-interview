@@ -17,7 +17,7 @@ listint_t *find_listint_loop(listint_t *head)
 
 		if (loop == start)
 		{
-            
+
 			start = head;
 			while (start != loop)
 			{

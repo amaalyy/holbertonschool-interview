@@ -7,23 +7,25 @@
  * is_valid_substring - checks if valid substring
  *
  * @s: string to be scanned
- * @words: words
- * @nb_words: nomber words
- * @word_len: length word
- * @start: start
+ * @words: words array
+ * @nb_words: number of words
+ * @word_len: length of each word
+ * @start: starting index in the string
  * Return: 1 if substring, otherwise 0
  */
-
 int is_valid_substring(char const *s, char const **words, int nb_words, int word_len, int start)
 {
     int *word_count = (int *)calloc(nb_words, sizeof(int));
-    int i, j, index, found;
-    char *word;
+    int i, j, found;
+    char word[word_len + 1];
+
+    if (!word_count)
+        return 0;
 
     for (i = 0; i < nb_words; i++)
     {
-        index = start + i * word_len;
-        word = (char *)malloc((word_len + 1) * sizeof(char));
+        int index = start + i * word_len;
+
         strncpy(word, s + index, word_len);
         word[word_len] = '\0';
 
@@ -37,8 +39,6 @@ int is_valid_substring(char const *s, char const **words, int nb_words, int word
                 break;
             }
         }
-
-        free(word);
 
         if (!found)
         {
@@ -57,20 +57,32 @@ int is_valid_substring(char const *s, char const **words, int nb_words, int word
  * @s: string to be scanned
  * @words: array of words
  * @nb_words: number of elements in the array
- * @n: address at which to store
- * Return: an allocated array, storing each index in otherwise NULL
+ * @n: address at which to store the result count
+ * Return: an allocated array storing indices, otherwise NULL
  */
-
 int *find_substring(char const *s, char const **words, int nb_words, int *n)
 {
+    if (!s || !words || nb_words == 0 || !n)
+    {
+        *n = 0;
+        return NULL;
+    }
+
     int word_len = strlen(words[0]);
     int str_len = strlen(s);
     int substr_len = word_len * nb_words;
-    int *result = (int *)malloc(str_len * sizeof(int));
+    int *result = NULL;
     int result_count = 0;
     int i;
 
     if (str_len < substr_len)
+    {
+        *n = 0;
+        return NULL;
+    }
+
+    result = (int *)malloc((str_len - substr_len + 1) * sizeof(int));
+    if (!result)
     {
         *n = 0;
         return NULL;
@@ -92,6 +104,5 @@ int *find_substring(char const *s, char const **words, int nb_words, int *n)
     }
 
     *n = result_count;
-    result = realloc(result, result_count * sizeof(int));
-    return result;
+    return realloc(result, result_count * sizeof(int));
 }

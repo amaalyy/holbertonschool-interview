@@ -70,40 +70,40 @@ int *find_substring(char const *s, char const **words, int nb_words, int *n)
 	{
 		*n = 0;
 		return (NULL);
-    }
+	}
 
-    word_len = strlen(words[0]);
-    str_len = strlen(s);
-    substr_len = word_len * nb_words;
+	word_len = strlen(words[0]);
+	str_len = strlen(s);
+	substr_len = word_len * nb_words;
 
-    if (str_len < substr_len)
-    {
-        *n = 0;
-        return (NULL);
-    }
+	if (str_len < substr_len)
+	{
+		*n = 0;
+		return (NULL);
+	}
 
-    result = (int *)malloc((str_len - substr_len + 1) * sizeof(int));
-    if (!result)
-    {
-        *n = 0;
-        return (NULL);
-    }
+	result = (int *)malloc((str_len - substr_len + 1) * sizeof(int));
+	if (!result)
+	{
+		*n = 0;
+		return (NULL);
+	}
 
-    for (i = 0; i <= str_len - substr_len; i++)
-    {
-        if (is_valid_substring(s, words, nb_words, word_len, i))
-        {
-            result[result_count++] = i;
-        }
-    }
+	for (i = 0; i <= str_len - substr_len; i++)
+	{
+		if (is_valid_substring(s, words, nb_words, word_len, i))
+		{
+			result[result_count++] = i;
+		}
+	}
 
-    if (result_count == 0)
-    {
-        free(result);
-        *n = 0;
-        return (NULL);
-    }
+	if (result_count == 0)
+	{
+		free(result);
+		*n = 0;
+		return (NULL);
+	}
 
-    *n = result_count;
-    return (realloc(result, result_count * sizeof(int)));
+	*n = result_count;
+	return (realloc(result, result_count * sizeof(int)));
 }

@@ -1,109 +1,85 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "substring.h"
-
 /**
- * is_valid_substring - checks if valid substring
- * @s: string to be scanned
- * @words: words array
- * @nb_words: number of words
- * @word_len: length of each word
- * @start: starting index in the string
- * Return: 1 if substring, otherwise 0
+ * initialize_find_substring - initialization step
+ * @str_len: length of string to be searched
+ * @nb_words:the number of words to be matched in the string
+ * @n:the address at which to store the number of
+ * elements in the returned array.
+ * Return: a pointer to storing indices of matched substrings otherwise NULL
  */
-int is_valid_substring(char const *s, char const **words,
-						int nb_words, int word_len, int start)
+int *initialize_find_substring(int str_len, int nb_words, int *n)
 {
-	int *word_count = (int *)calloc(nb_words, sizeof(int));
-	int i, j, found;
-	char word[word_len + 1];
+	int *res_ind = malloc(str_len * sizeof(int));
 
-	if (!word_count)
-		return (0);
-
-	for (i = 0; i < nb_words; i++)
+	if (!res_ind)
 	{
-		int index = start + i * word_len;
-
-		strncpy(word, s + index, word_len);
-		word[word_len] = '\0';
-
-		found = 0;
-		for (j = 0; j < nb_words; j++)
-		{
-			if (word_count[j] == 0 && strcmp(word, words[j]) == 0)
-			{
-				word_count[j] = 1;
-				found = 1;
-				break;
-			}
-		}
-
-		if (!found)
-		{
-			free(word_count);
-			return (0);
-		}
+		*n = 0;
+		return (NULL);
 	}
+	int *used_words = malloc(nb_words * sizeof(int));
 
-	free(word_count);
-	return (1);
+	if (!used_words)
+	{
+		free(res_ind);
+		*n = 0;
+		return (NULL);
+	}
+	free(used_words);
+	return (res_ind);
 }
 
+
 /**
- * find_substring - find substring
- * @s: string to be scanned
- * @words: array of words
- * @nb_words: number of elements in the array
- * @n: address at which to store the result count
- * Return: an allocated array storing indices, otherwise NULL
+ * find_substring - finds all the possible substrings
+ * containing a list of words, within a given string.
+ * @s:the string to scan
+ * @words:the array of words
+ * @nb_words:the number of elements in the array words
+ * @n:the address at which to store the number of
+ * elements in the returned array.
+ * Return:allocated array,storing each index in s,
+ * at which a substring was found,otherwise NULL
  */
 int *find_substring(char const *s, char const **words, int nb_words, int *n)
 {
-	int word_len, str_len, substr_len;
-	int *result = NULL;
-	int result_count = 0;
-	int i;
+	int str_len = strlen(s), word_len = strlen(words[0]);
+	int total_len = word_len * nb_words, match_count = 0;
+	int *res_ind = initialize_find_substring(str_len, nb_words, n), i, j, k;
 
-	if (!s || !words || nb_words == 0 || !n)
-	{
-		*n = 0;
+	if (!res_ind)
 		return (NULL);
-	}
-
-	word_len = strlen(words[0]);
-	str_len = strlen(s);
-	substr_len = word_len * nb_words;
-
-	if (str_len < substr_len)
+	for (i = 0; i <= str_len - total_len; i++)
 	{
-		*n = 0;
-		return (NULL);
-	}
+		int *used_words = malloc(nb_words * sizeof(int));
+		int is_valid = 1;
 
-	result = (int *)malloc((str_len - substr_len + 1) * sizeof(int));
-	if (!result)
-	{
-		*n = 0;
-		return (NULL);
-	}
-
-	for (i = 0; i <= str_len - substr_len; i++)
-	{
-		if (is_valid_substring(s, words, nb_words, word_len, i))
+		if (!used_words)
+			free(res_ind);
+		memset(used_words, 0, nb_words * sizeof(int));
+		for (j = 0; j < nb_words; j++)
 		{
-			result[result_count++] = i;
+			const char *current_word = s + i + j * word_len;
+			int found_match = 0;
+
+			for (k = 0; k < nb_words; k++)
+			{
+				if (!used_words[k] && strncmp(current_word, words[k], word_len) == 0)
+				{
+					used_words[k] = 1;
+					found_match = 1;
+					break;
+				}
+			}
+			if (!found_match)
+			{
+				is_valid = 0;
+				break;
+			}
 		}
+		if (is_valid)
+			res_ind[match_count++] = i;
+		free(used_words);
 	}
-
-	if (result_count == 0)
-	{
-		free(result);
-		*n = 0;
-		return (NULL);
-	}
-
-	*n = result_count;
-	return (realloc(result, result_count * sizeof(int)));
+	*n = match_count;
+	return (match_count == 0 ? (free(res_ind), NULL) : res_ind);
 }

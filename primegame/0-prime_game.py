@@ -5,6 +5,9 @@ Prime Game
 
 
 def is_prime(num):
+    """
+    is prime
+    """
     if num < 2:
         return False
     for i in range(2, int(num**0.5) + 1):
@@ -14,10 +17,16 @@ def is_prime(num):
 
 
 def get_primes(remaining_nums):
+    """
+    get primes
+    """
     return [num for num in remaining_nums if is_prime(num)]
 
 
 def play_round(remaining_nums):
+    """
+    play round
+    """
     primes = get_primes(remaining_nums)
     if not primes:
         return "Ben"
@@ -38,6 +47,9 @@ def play_round(remaining_nums):
 
 
 def isWinner(x, nums):
+    """
+    is winner
+    """
     maria_wins = 0
     ben_wins = 0
 
